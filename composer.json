@@ -15,7 +15,10 @@
     "psr-4": {
       "Tg\\Decimal\\": "src/"
     },
-    "files": ["src/AutoloadHelpers.php"]
+    "files": [
+      "src/AutoloadGeneratedHelpers.php",
+      "src/AutoloadHelpers.php"
+    ]
   },
   "require-dev": {
     "phpunit/phpunit": "^6.5"

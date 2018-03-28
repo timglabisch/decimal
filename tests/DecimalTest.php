@@ -4,6 +4,9 @@ namespace Tg\Tests\Decimal;
 
 use PHPUnit\Framework\TestCase;
 use Tg\Decimal\Decimal;
+use function Tg\Decimal\decimal0;
+use function Tg\Decimal\decimal1;
+use function Tg\Decimal\decimal2;
 use function Tg\Decimal\floatish as fl;
 
 class DecimalTest extends TestCase
@@ -75,17 +78,17 @@ class DecimalTest extends TestCase
     {
         yield [
             fl("-0.1"),
-            fl("0")->subtract(fl("0.1"))
+            fl("0")->sub(fl("0.1"))
         ];
 
         yield [
             fl("-2.9"),
-            fl("0.1")->subtract(fl("3"))
+            fl("0.1")->sub(fl("3"))
         ];
 
         yield [
             fl("-2.1"),
-            fl("-3.1")->subtract(fl("-1"))
+            fl("-3.1")->sub(fl("-1"))
         ];
     }
 
@@ -93,27 +96,27 @@ class DecimalTest extends TestCase
     {
         yield [
             fl("0"),
-            fl("1")->multiply(fl("0"))
+            fl("1")->mul(fl("0"))
         ];
 
         yield [
             fl("1"),
-            fl("1")->multiply(fl("1"))
+            fl("1")->mul(fl("1"))
         ];
 
         yield [
             fl("0.30"),
-            fl("0.10")->multiply(fl("3"))
+            fl("0.10")->mul(fl("3"))
         ];
 
         yield [
             fl("4"),
-            fl("2")->multiply(fl("2"))
+            fl("2")->mul(fl("2"))
         ];
 
         yield [
             fl("0.000000000004"),
-            fl("0.000000000002")->multiply(fl("2"))
+            fl("0.000000000002")->mul(fl("2"))
         ];
     }
 
@@ -121,7 +124,7 @@ class DecimalTest extends TestCase
     {
         yield [
             fl("0.3333333333333333"),
-            fl("1")->divideBy(fl("3"))
+            fl("1")->div(fl("3"))
         ];
     }
 
@@ -136,7 +139,7 @@ class DecimalTest extends TestCase
 
         static::assertSame(
             $prec,
-            fl("1")->divideBy(fl("3"))->__toString()
+            fl("1")->div(fl("3"))->__toString()
         );
     }
 
@@ -149,36 +152,36 @@ class DecimalTest extends TestCase
 
         static::assertSame(
             '33.3333333333333333',
-            fl("100")->divideBy(fl("3"))->__toString()
+            fl("100")->div(fl("3"))->__toString()
         );
 
 
         static::assertSame(
             '33.3333333333333333',
-            fl("100")->divideBy(fl("3"), true)->__toString()
+            fl("100")->div(fl("3"), true)->__toString()
         );
     }
 
     public function testRound()
     {
         static::assertDecimalSame(
-            (new Decimal('100.54', 2))->round(1),
-            new Decimal('100.5', 1)
+            decimal2('100.54')->round(1),
+            decimal1('100.5')
         );
 
         static::assertDecimalSame(
-            (new Decimal('100.55', 2))->round(1),
-            new Decimal('100.6', 1)
+            decimal2('100.55')->round(1),
+            decimal1('100.6')
         );
 
         static::assertDecimalSame(
-            (new Decimal('3', 0)),
-            (new Decimal('5', 0))->divideBy((new Decimal('2', 0)), true)
+            decimal0('3'),
+            decimal0('5')->div(decimal0('2'), true)
         );
 
         static::assertDecimalSame(
-            (new Decimal('2', 0)),
-            (new Decimal('5', 0))->divideBy((new Decimal('2', 0)), false)
+            decimal0('2'),
+            decimal0('5')->div(decimal0('2'), false)
         );
     }
 }

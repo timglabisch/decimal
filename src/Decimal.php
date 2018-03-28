@@ -69,7 +69,7 @@ class Decimal
         return new static($amount, $scale);
     }
 
-    public function subtract(Decimal $subtrahend): Decimal
+    public function sub(Decimal $subtrahend): Decimal
     {
         $scale = static::calculateMaxScale($this, $subtrahend);
         $amount = bcsub($this->getValue(), $subtrahend->getValue(), $scale);
@@ -77,7 +77,7 @@ class Decimal
         return new static($amount, $scale);
     }
 
-    public function multiply($multiplier, bool $round = false): Decimal
+    public function mul($multiplier, bool $round = false): Decimal
     {
         $scale = $round ? $this->getScale() + 1 : $this->getScale();
 
@@ -90,7 +90,7 @@ class Decimal
         return $round ? $decimal->round($scale - 1) : $decimal;
     }
 
-    public function divideBy($divisor, bool $round = false): Decimal
+    public function div($divisor, bool $round = false): Decimal
     {
         $scale = $round ? $this->getScale() + 1 : $this->getScale();
 
