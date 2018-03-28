@@ -151,5 +151,34 @@ class DecimalTest extends TestCase
             '33.3333333333333333',
             fl("100")->divideBy(fl("3"))->__toString()
         );
+
+
+        static::assertSame(
+            '33.3333333333333333',
+            fl("100")->divideBy(fl("3"), true)->__toString()
+        );
+    }
+
+    public function testRound()
+    {
+        static::assertDecimalSame(
+            (new Decimal('100.54', 2))->round(1),
+            new Decimal('100.5', 1)
+        );
+
+        static::assertDecimalSame(
+            (new Decimal('100.55', 2))->round(1),
+            new Decimal('100.6', 1)
+        );
+
+        static::assertDecimalSame(
+            (new Decimal('3', 0)),
+            (new Decimal('5', 0))->divideBy((new Decimal('2', 0)), true)
+        );
+
+        static::assertDecimalSame(
+            (new Decimal('2', 0)),
+            (new Decimal('5', 0))->divideBy((new Decimal('2', 0)), false)
+        );
     }
 }

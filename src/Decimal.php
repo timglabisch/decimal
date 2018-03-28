@@ -90,7 +90,7 @@ class Decimal
         return $round ? $decimal->round($scale - 1) : $decimal;
     }
 
-    public function divideBy($divisor, int $scale = null, bool $round = false): Decimal
+    public function divideBy($divisor, bool $round = false): Decimal
     {
         $scale = $round ? $this->getScale() + 1 : $this->getScale();
 
