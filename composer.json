@@ -1,0 +1,28 @@
+{
+  "name": "timg/decimal",
+  "type": "library",
+  "license": "MIT",
+  "require": {
+
+  },
+  "authors": [
+    {
+      "name": "timglabisch",
+      "email": "code.tim@ainfach.de"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Tg\\Decimal\\": "src/"
+    },
+    "files": ["src/AutoloadHelpers.php"]
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6.5"
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Tg\\Tests\\Decimal\\": "tests/"
+    }
+  }
+}
