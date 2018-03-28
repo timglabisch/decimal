@@ -31,7 +31,7 @@ class Decimal
 
     public static function newFloatish(string $value): Decimal
     {
-        return new static($value, ini_get('precision'));
+        return new static($value, ini_get('precision') + 2);
     }
 
     private static function calculateMaxScale(Decimal $a, Decimal $b)

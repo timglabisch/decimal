@@ -32,6 +32,17 @@ class DecimalTest extends TestCase
         static::assertDecimalNotSame($a, $b);
     }
 
+    /**
+     * @dataProvider dataProviderAddSame
+     * @dataProvider dataProviderMul
+     * @dataProvider dataProviderSubtract
+     * @dataProvider dataProviderDiv
+     */
+    public function testSame(Decimal $a, Decimal $b)
+    {
+        static::assertDecimalSame($a, $b);
+    }
+
     public function dataProviderAddSame()
     {
         yield [
@@ -60,13 +71,22 @@ class DecimalTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataProviderAddSame
-     * @dataProvider dataProviderMul
-     */
-    public function testSame(Decimal $a, Decimal $b)
+    public function dataProviderSubtract()
     {
-        static::assertDecimalSame($a, $b);
+        yield [
+            fl("-0.1"),
+            fl("0")->subtract(fl("0.1"))
+        ];
+
+        yield [
+            fl("-2.9"),
+            fl("0.1")->subtract(fl("3"))
+        ];
+
+        yield [
+            fl("-2.1"),
+            fl("-3.1")->subtract(fl("-1"))
+        ];
     }
 
     public function dataProviderMul()
@@ -95,5 +115,41 @@ class DecimalTest extends TestCase
             fl("0.000000000004"),
             fl("0.000000000002")->multiply(fl("2"))
         ];
+    }
+
+    public function dataProviderDiv()
+    {
+        yield [
+            fl("0.3333333333333333"),
+            fl("1")->divideBy(fl("3"))
+        ];
+    }
+
+    public function testPrecision()
+    {
+        $prec = "0.3333333333333333";
+
+        static::assertSame(
+            $prec,
+            var_export(1 / 3, true)
+        );
+
+        static::assertSame(
+            $prec,
+            fl("1")->divideBy(fl("3"))->__toString()
+        );
+    }
+
+    public function testPrecision2()
+    {
+        static::assertSame(
+            '33.333333333333336',
+            var_export(100 / 3, true)
+        );
+
+        static::assertSame(
+            '33.3333333333333333',
+            fl("100")->divideBy(fl("3"))->__toString()
+        );
     }
 }
