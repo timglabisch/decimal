@@ -13,6 +13,23 @@ class Decimal
     /** @var int */
     private $scale;
 
+    public static function fromStringStrict(string $value): self
+    {
+        if (($pos = strpos($value, '.')) === false) {
+            return new Decimal0($value);
+        }
+
+        $decimal = rtrim(substr($value, $pos + 1), '0');
+
+        $klass = '\Tg\Decimal\Decimal'. strlen($decimal);
+
+        if (!\class_exists($klass)) {
+            throw new \RuntimeException('no class for Decimaltype found, to large?');
+        }
+
+        return new $klass(substr($value, 0, $pos) . '.' . $decimal, strlen($decimal));
+    }
+
     public function __construct(string $value, int $scale)
     {
         $this->value = static::createNewNumber($value, $scale);
@@ -149,13 +166,7 @@ class Decimal
      */
     public function reduceScale()
     {
-        if (($pos = strpos($this->getValue(), '.')) === false) {
-            return $this;
-        }
-
-        $decimal = rtrim(substr($this->getValue(), $pos + 1), '0');
-
-        return new Decimal(substr($this->getValue(), 0, $pos) . '.' . $decimal, strlen($decimal));
+        return dec($this->getValue());
     }
 
     public function __toString()

@@ -4,6 +4,8 @@
 
 namespace Tg\Decimal;
 
+class DecimalSettings { public const MAX_SCALE = 100; }
+
 function dec0(string $value): \Tg\Decimal\Decimal0 { return new \Tg\Decimal\Decimal0($value); }
 function dec1(string $value): \Tg\Decimal\Decimal1 { return new \Tg\Decimal\Decimal1($value); }
 function dec2(string $value): \Tg\Decimal\Decimal2 { return new \Tg\Decimal\Decimal2($value); }
