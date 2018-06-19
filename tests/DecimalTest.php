@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 use function Tg\Decimal\dec0;
 use function Tg\Decimal\dec1;
 use function Tg\Decimal\dec2;
+use function Tg\Decimal\dec3;
+use function Tg\Decimal\dec5;
+use function Tg\Decimal\dec6;
 use Tg\Decimal\Decimal;
 use function Tg\Decimal\decimal0;
 use function Tg\Decimal\decimal1;
@@ -190,6 +193,34 @@ class DecimalTest extends TestCase
         static::assertDecimalSame(
             dec0('2'),
             dec0('5')->div(dec0('2'), false)
+        );
+    }
+
+    public function testReduceScale()
+    {
+        static::assertNotSame(
+            (string)dec1("1.0"),
+            (string)dec6('1.000000')->reduceScale()
+        );
+
+        static::assertSame(
+            (string)dec0("1"),
+            (string)dec6('1.000000')->reduceScale()
+        );
+
+        static::assertSame(
+            (string)dec0("1"),
+            (string)dec6('1')->reduceScale()
+        );
+
+        static::assertSame(
+            (string)dec3("1.111"),
+            (string)dec6('1.111000')->reduceScale()
+        );
+
+        static::assertSame(
+            (string)dec5("1.11101"),
+            (string)dec6('1.111010')->reduceScale()
         );
     }
 }

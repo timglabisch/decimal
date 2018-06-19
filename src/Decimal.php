@@ -134,6 +134,30 @@ class Decimal
         return new Decimal($newAmount, $scale);
     }
 
+    public function equals(Decimal $decimal)
+    {
+        $maxScale = self::calculateMaxScale($this, $decimal);
+
+        return (string)(new Decimal($this->getValue(), $maxScale)) === (string)(new Decimal($decimal->getValue(), $maxScale));
+    }
+
+    /**
+     * if you've a Decimal6 like 1.110000 it would fit in a Decimal2.
+     * this function will turn the Decimal6 to a Decimal2
+     *
+     * @return Decimal
+     */
+    public function reduceScale()
+    {
+        if (($pos = strpos($this->getValue(), '.')) === false) {
+            return $this;
+        }
+
+        $decimal = rtrim(substr($this->getValue(), $pos + 1), '0');
+
+        return new Decimal(substr($this->getValue(), 0, $pos) . '.' . $decimal, strlen($decimal));
+    }
+
     public function __toString()
     {
         return $this->getValue();
