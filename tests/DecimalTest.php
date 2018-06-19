@@ -3,6 +3,9 @@
 namespace Tg\Tests\Decimal;
 
 use PHPUnit\Framework\TestCase;
+use function Tg\Decimal\dec0;
+use function Tg\Decimal\dec1;
+use function Tg\Decimal\dec2;
 use Tg\Decimal\Decimal;
 use function Tg\Decimal\decimal0;
 use function Tg\Decimal\decimal1;
@@ -48,6 +51,11 @@ class DecimalTest extends TestCase
 
     public function dataProviderAddSame()
     {
+        yield [
+            fl("0.20"),
+            fl("0")->add(fl("0.20"))
+        ];
+
         yield [
             fl("0.20"),
             fl("0.10")->add(fl("0.10"))
@@ -165,23 +173,23 @@ class DecimalTest extends TestCase
     public function testRound()
     {
         static::assertDecimalSame(
-            decimal2('100.54')->round(1),
-            decimal1('100.5')
+            dec2('100.54')->round(1),
+            dec1('100.5')
         );
 
         static::assertDecimalSame(
-            decimal2('100.55')->round(1),
-            decimal1('100.6')
+            dec2('100.55')->round(1),
+            dec1('100.6')
         );
 
         static::assertDecimalSame(
-            decimal0('3'),
-            decimal0('5')->div(decimal0('2'), true)
+            dec0('3'),
+            dec0('5')->div(dec0('2'), true)
         );
 
         static::assertDecimalSame(
-            decimal0('2'),
-            decimal0('5')->div(decimal0('2'), false)
+            dec0('2'),
+            dec0('5')->div(dec0('2'), false)
         );
     }
 }

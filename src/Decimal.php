@@ -31,7 +31,7 @@ class Decimal
 
     public static function newFloatish(string $value): Decimal
     {
-        return new static($value, ini_get('precision') + 2);
+        return new Decimal($value, ini_get('precision') + 2);
     }
 
     private static function calculateMaxScale(Decimal $a, Decimal $b)
@@ -64,9 +64,9 @@ class Decimal
     public function add(Decimal $addend): Decimal
     {
         $scale = static::calculateMaxScale($this, $addend);
-        $amount = bcadd($this->getValue(), $this->getValue(), $scale);
+        $amount = bcadd($this->getValue(), $addend->getValue(), $scale);
 
-        return new static($amount, $scale);
+        return new Decimal($amount, $scale);
     }
 
     public function sub(Decimal $subtrahend): Decimal
@@ -74,7 +74,7 @@ class Decimal
         $scale = static::calculateMaxScale($this, $subtrahend);
         $amount = bcsub($this->getValue(), $subtrahend->getValue(), $scale);
 
-        return new static($amount, $scale);
+        return new Decimal($amount, $scale);
     }
 
     public function mul($multiplier, bool $round = false): Decimal
@@ -85,7 +85,7 @@ class Decimal
 
         $amount = bcmul($this->getValue(), $multiplier, $scale);
 
-        $decimal = new static($amount, $scale);
+        $decimal = new Decimal($amount, $scale);
 
         return $round ? $decimal->round($scale - 1) : $decimal;
     }
@@ -101,7 +101,7 @@ class Decimal
         }
         $amount = bcdiv($this->getValue(), $divisor, $scale);
 
-        $decimal = new static($amount, $scale);
+        $decimal = new Decimal($amount, $scale);
 
         return $round ?
             $decimal->round(--$scale) :
@@ -131,7 +131,7 @@ class Decimal
         }
         $newAmount = bcadd($this->getValue(), $add, $scale);
 
-        return new static($newAmount, $scale);
+        return new Decimal($newAmount, $scale);
     }
 
     public function __toString()
