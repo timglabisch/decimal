@@ -10,6 +10,14 @@ class Rational
     /** @var int */
     private $denominator;
 
+    public static function fromDecimal(Decimal $decimal): Rational
+    {
+        $scale = $decimal->getScale();
+
+        // hoch rechnen
+        return (new Rational($decimal->getValue() * (10 ** $scale), 10 ** $scale))->normalize();
+    }
+
     public static function fromInt(int $cnt): Rational
     {
         return new self($cnt, 1);

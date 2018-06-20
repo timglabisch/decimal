@@ -3,6 +3,9 @@
 namespace Tg\Tests\Decimal;
 
 use PHPUnit\Framework\TestCase;
+use Tg\Decimal\Decimal;
+use Tg\Decimal\Decimal1;
+use Tg\Decimal\Decimal10;
 use Tg\Decimal\Rational;
 
 class RationalTest extends TestCase
@@ -12,6 +15,7 @@ class RationalTest extends TestCase
      * @dataProvider dataProviderBasicAdd
      * @dataProvider dataProviderBasicDivide
      * @dataProvider dataProviderBasicSubstract
+     * @dataProvider dataProviderFromDecimal
      */
     public function testSameString(string $s, Rational $rational)
     {
@@ -52,6 +56,25 @@ class RationalTest extends TestCase
         yield [
             '(9 / 4)',
             (new Rational(15, 4))->substractRational(new Rational(6, 4))
+        ];
+    }
+
+    public function dataProviderFromDecimal()
+    {
+        yield [
+            '(1 / 1)',
+            Rational::fromDecimal(new Decimal("1", 1))
+        ];
+
+
+        yield [
+            '(33 / 10)',
+            Rational::fromDecimal(new Decimal1("3.3"))
+        ];
+        
+        yield [
+            '(33333333333 / 10000000000)',
+            Rational::fromDecimal(new Decimal10("3.3333333333"))
         ];
     }
 }
