@@ -94,7 +94,17 @@ class Decimal
         return new Decimal($amount, $scale);
     }
 
-    public function mul($multiplier, bool $round = false): Decimal
+    public function mul(Decimal $multiplier): Decimal {
+
+        // the maximum scale of a multiplication is scale + scale.
+        $scale = $this->getScale() + $multiplier->getScale();
+
+        $amount = bcmul($this->getValue(), $multiplier->getValue(), $scale);
+
+        return new Decimal($amount, $scale);
+    }
+
+    public function mulScaleBySelf($multiplier, bool $round = false): Decimal
     {
         $scale = $round ? $this->getScale() + 1 : $this->getScale();
 
@@ -107,7 +117,7 @@ class Decimal
         return $round ? $decimal->round($scale - 1) : $decimal;
     }
 
-    public function div($divisor, bool $round = false): Decimal
+    public function divScaleBySelf($divisor, bool $round = false): Decimal
     {
         $scale = $round ? $this->getScale() + 1 : $this->getScale();
 

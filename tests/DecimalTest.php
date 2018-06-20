@@ -3,6 +3,7 @@
 namespace Tg\Tests\Decimal;
 
 use PHPUnit\Framework\TestCase;
+use function Tg\Decimal\dec;
 use function Tg\Decimal\dec0;
 use function Tg\Decimal\dec1;
 use function Tg\Decimal\dec2;
@@ -43,6 +44,7 @@ class DecimalTest extends TestCase
 
     /**
      * @dataProvider dataProviderAddSame
+     * @dataProvider dataProviderMulScaleBySelf
      * @dataProvider dataProviderMul
      * @dataProvider dataProviderSubtract
      * @dataProvider dataProviderDiv
@@ -106,28 +108,47 @@ class DecimalTest extends TestCase
     public function dataProviderMul()
     {
         yield [
+            dec("1.21"),
+            dec("1.1")->mul(dec("1.1"))
+        ];
+
+        yield [
+            dec("1.70052"),
+            dec("1.532")->mul(dec("1.11"))
+        ];
+    }
+
+    public function dataProviderMulScaleBySelf()
+    {
+
+        yield [
+            dec("1.2"),
+            dec("1.1")->mulScaleBySelf(dec("1.1"))
+        ];
+
+        yield [
             fl("0"),
-            fl("1")->mul(fl("0"))
+            fl("1")->mulScaleBySelf(fl("0"))
         ];
 
         yield [
             fl("1"),
-            fl("1")->mul(fl("1"))
+            fl("1")->mulScaleBySelf(fl("1"))
         ];
 
         yield [
             fl("0.30"),
-            fl("0.10")->mul(fl("3"))
+            fl("0.10")->mulScaleBySelf(fl("3"))
         ];
 
         yield [
             fl("4"),
-            fl("2")->mul(fl("2"))
+            fl("2")->mulScaleBySelf(fl("2"))
         ];
 
         yield [
             fl("0.000000000004"),
-            fl("0.000000000002")->mul(fl("2"))
+            fl("0.000000000002")->mulScaleBySelf(fl("2"))
         ];
     }
 
@@ -135,7 +156,7 @@ class DecimalTest extends TestCase
     {
         yield [
             fl("0.3333333333333333"),
-            fl("1")->div(fl("3"))
+            fl("1")->divScaleBySelf(fl("3"))
         ];
     }
 
@@ -150,7 +171,7 @@ class DecimalTest extends TestCase
 
         static::assertSame(
             $prec,
-            fl("1")->div(fl("3"))->__toString()
+            fl("1")->divScaleBySelf(fl("3"))->__toString()
         );
     }
 
@@ -163,13 +184,13 @@ class DecimalTest extends TestCase
 
         static::assertSame(
             '33.3333333333333333',
-            fl("100")->div(fl("3"))->__toString()
+            fl("100")->divScaleBySelf(fl("3"))->__toString()
         );
 
 
         static::assertSame(
             '33.3333333333333333',
-            fl("100")->div(fl("3"), true)->__toString()
+            fl("100")->divScaleBySelf(fl("3"), true)->__toString()
         );
     }
 
@@ -187,12 +208,12 @@ class DecimalTest extends TestCase
 
         static::assertDecimalSame(
             dec0('3'),
-            dec0('5')->div(dec0('2'), true)
+            dec0('5')->divScaleBySelf(dec0('2'), true)
         );
 
         static::assertDecimalSame(
             dec0('2'),
-            dec0('5')->div(dec0('2'), false)
+            dec0('5')->divScaleBySelf(dec0('2'), false)
         );
     }
 
