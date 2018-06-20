@@ -4,18 +4,30 @@ namespace Tg\Decimal;
 
 class Rational
 {
-    // whole ...
-
     /** @var int */
     private $numerator;
 
     /** @var int */
     private $denominator;
 
+    public static function fromInt(int $cnt): Rational
+    {
+        return new self($cnt, 1);
+    }
+
     public function __construct(int $numerator, int $denominator)
     {
         $this->numerator = $numerator;
         $this->denominator = $denominator;
+    }
+
+    public static function leastCommonMultiple(int $a, int $b): int
+    {
+        if ($a === 0 || $b === 0) {
+            return 0;
+        }
+
+        return abs($a * $b) / self::greatestCommonDivisor($a, $b);
     }
 
     private static function greatestCommonDivisor(int $a, int $b): int
@@ -38,11 +50,33 @@ class Rational
 
     public function addRational(Rational $rational): Rational
     {
-        $numerator = ($this->denominator * $this->numerator) + ($rational->getDenominator() * $rational->getNumerator());
+        $lcm = static::leastCommonMultiple($this->getDenominator(), $rational->getDenominator());
 
-        $denominator = $this->denominator * $rational->getDenominator();
+        $n = $this->getNumerator() * intdiv($lcm, $this->getDenominator()) + $rational->getNumerator() * intdiv($lcm, $rational->getDenominator());
+        $d = $lcm;
 
-        return (new Rational($numerator, $denominator))->normalize();
+        return (new Rational($n, $d))->normalize();
+    }
+
+    public function multiplyRational(Rational $rational): Rational
+    {
+        return (new Rational(
+            $rational->getNumerator() * $this->getNumerator(),
+            $this->getDenominator() * $rational->getDenominator()
+        ))->normalize();
+    }
+
+    public function divideRational(Rational $rational): Rational
+    {
+        return (new Rational(
+            $rational->getDenominator() * $this->getNumerator(),
+            $this->getDenominator() * $rational->getNumerator()
+        ))->normalize();
+    }
+
+    public function substractRational(Rational $rational): Rational
+    {
+        return $this->addRational($rational->multiplyRational(Rational::fromInt(-1)));
     }
 
     public function normalize()
@@ -66,6 +100,5 @@ class Rational
     {
         return $this->denominator;
     }
-
 
 }
