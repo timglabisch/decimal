@@ -3,6 +3,8 @@
 namespace Tg\Decimal\Calculator;
 
 use Tg\Decimal\Calculator\LazyCalc\CalculationOperation;
+use Tg\Decimal\PrettyPrinter\PrettyPrinterInterface;
+use Tg\Decimal\PrettyPrinter\PrettyPrinterStandard;
 use Tg\Decimal\Rational;
 use Tg\Decimal\ToRationalInterface;
 
@@ -15,6 +17,7 @@ class LazyCalc implements ToRationalInterface
     {
         if ($value instanceof CalculationOperation) {
             $this->value = $value;
+
             return;
         }
 
@@ -56,14 +59,20 @@ class LazyCalc implements ToRationalInterface
         return $this->value->toRational();
     }
 
-    public function pretty(): string
+    public function pretty(PrettyPrinterInterface $printer = null): string
     {
-        return $this->value->toPretty();
+        return ($printer ?? new PrettyPrinterStandard())->pretty($this->value);
     }
 
     public function hint(string $hint): LazyCalc
     {
         $this->value->addHint($hint);
+
         return $this;
+    }
+
+    public function getCalculationOperation(): CalculationOperation
+    {
+        return $this->value;
     }
 }

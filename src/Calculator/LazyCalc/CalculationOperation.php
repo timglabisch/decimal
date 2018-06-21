@@ -80,59 +80,15 @@ class CalculationOperation implements ToRationalInterface
         }
     }
 
-    public function toPrettyVal($val)
-    {
-        if ($val instanceof CalculationOperation) {
-            return $val->toPretty();
-        }
-
-        if ($val instanceof LazyCalc) {
-            return $val->pretty();
-        }
-
-        if ($val instanceof Rational) {
-            return (string)$val;
-        }
-
-        if ($val instanceof Decimal) {
-            return (string)$val;
-        }
-
-        throw new \LogicException('could not format val.');
-    }
-
-    public function toPretty()
-    {
-        if ($this->operation === self::OPERATION_ADD) {
-            return '(' . $this->toPrettyVal($this->a) . ' + ' . $this->toPrettyVal($this->b) . ')';
-        }
-
-        if ($this->operation === self::OPERATION_DIV) {
-            return '(' . $this->toPrettyVal($this->a) . ' / ' . $this->toPrettyVal($this->b) . ')';
-        }
-
-        if ($this->operation === self::OPERATION_MUL) {
-            return '(' . $this->toPrettyVal($this->a) . ' * ' . $this->toPrettyVal($this->b) . ')';
-        }
-
-        if ($this->operation === self::OPERATION_SUB) {
-            return '(' . $this->toPrettyVal($this->a) . ' - ' . $this->toPrettyVal($this->b) . ')';
-        }
-
-        if ($this->operation === self::OPERATION_NO_OP) {
-            return $this->toPrettyVal($this->a);
-        }
-
-        if ($this->operation === self::OPERATION_ROUND) {
-            return 'round(' . $this->toPrettyVal($this->a) . ', scale = ' . $this->operationArgs['scale'] . ')';
-        }
-
-        throw new \LogicException('could not pretty operation');
-    }
-
     public function addHint(string $hint)
     {
         $this->hint = $hint;
     }
+
+    public function getOperationArgs(): array
+    {
+        return $this->operationArgs;
+    }
+
 
 }
