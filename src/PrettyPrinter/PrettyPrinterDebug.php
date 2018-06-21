@@ -13,7 +13,16 @@ class PrettyPrinterDebug implements PrettyPrinterInterface
     private function toPrettyVal($val, PrettyPrinterDebugMetaData $metaData)
     {
         if ($val instanceof CalculationOperation) {
-            return $this->pretty($val, $metaData);
+
+            $out = '';
+
+            if ($val->getHint()) {
+                $out .= "\n" . $metaData->indent($val) . '  // ' . $val->getHint();
+            }
+
+            $out .= $this->pretty($val, $metaData);
+
+            return $out;
         }
 
         if ($val instanceof LazyCalc) {
@@ -21,11 +30,11 @@ class PrettyPrinterDebug implements PrettyPrinterInterface
         }
 
         if ($val instanceof Rational) {
-            return "\n" . $metaData->indent($val) . (string)$val;
+            return "\n" . $metaData->indent($val) . (string)$val . ($val->getHint() === null ? '' : '  // ' . $val->getHint());
         }
 
         if ($val instanceof Decimal) {
-            return "\n" . $metaData->indent($val) . (string)$val;
+            return "\n" . $metaData->indent($val) . (string)$val . ($val->getHint() === null ? '' : '  // ' . $val->getHint());
         }
 
         throw new \LogicException('could not format val.');
@@ -39,7 +48,7 @@ class PrettyPrinterDebug implements PrettyPrinterInterface
 
         if ($operation instanceof CalculationOperation) {
 
-            if ($operation->getOperation() ===  CalculationOperation::OPERATION_NO_OP) {
+            if ($operation->getOperation() === CalculationOperation::OPERATION_NO_OP) {
                 $deep--;
             }
 

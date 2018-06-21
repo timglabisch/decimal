@@ -80,9 +80,14 @@ class CalculationOperation implements ToRationalInterface
         }
     }
 
-    public function addHint(string $hint)
+    public function hint(string $hint)
     {
         $this->hint = $hint;
+    }
+
+    public function getHint(): ?string
+    {
+        return $this->hint;
     }
 
     public function getOperationArgs(): array

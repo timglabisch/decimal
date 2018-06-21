@@ -66,7 +66,7 @@ class LazyCalc implements ToRationalInterface
 
     public function hint(string $hint): LazyCalc
     {
-        $this->value->addHint($hint);
+        $this->value->hint($hint);
 
         return $this;
     }
