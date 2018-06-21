@@ -12,11 +12,10 @@ class LazyCalcTest extends TestCase
     public function testFoo()
     {
         $calculation = lazy_calc(dec(0))
-            ->add(dec(10)) // 10
-            ->add(dec(10)) // 20
-            ->add(rat(2, 3)) // 0,6667
-            ->mul(dec(2));
-        ;
+            ->add(dec(10))// 10
+            ->add(dec(10))// 20
+            ->add(rat(2, 3))// 0,6667
+            ->mul(dec(2));;
 
 
         static::assertSame(
@@ -32,8 +31,7 @@ class LazyCalcTest extends TestCase
     {
         $calculation =
             lazy_calc(dec(3))
-            ->mul(lazy_calc(dec(1))->add(dec(2)))
-        ;
+                ->mul(lazy_calc(dec(1))->add(dec(2)));
 
         static::assertSame(
             '(3 * (1 + 2))',
@@ -52,9 +50,25 @@ class LazyCalcTest extends TestCase
             ->add(dec(10))->hint('add value 1')
             ->add(dec(10))->hint('add value 2')
             ->add(rat(2, 3))->hint('add value 2/3')
-            ->mul(dec(2))->hint('mul with 2')
-        ;
+            ->mul(dec(2))->hint('mul with 2');
 
-       $this->assertTrue(true); // not yet fully finished, debug formatter is missing.
+        $this->assertTrue(true); // not yet fully finished, debug formatter is missing.
+    }
+
+    public function testRound()
+    {
+        $calculation = lazy_calc(dec(0))
+            ->add(lazy_calc(rat(1, 3))->round(2))
+            ->add(lazy_calc(rat(1, 3))->round(2))
+            ->add(lazy_calc(rat(1, 3))->round(3));
+
+        static::assertSame(
+            '(((0 + round((1 / 3), scale = 2)) + round((1 / 3), scale = 2)) + round((1 / 3), scale = 3))',
+            $calculation->pretty()
+        );
+
+        static::assertTrue(
+            dec('0.99300')->equals($calculation->calculate()->toDecimal(5))
+        );
     }
 }

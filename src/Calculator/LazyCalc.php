@@ -41,6 +41,11 @@ class LazyCalc implements ToRationalInterface
         return new self(new CalculationOperation($this->value, $value, CalculationOperation::OPERATION_DIV));
     }
 
+    public function round(int $scale): LazyCalc
+    {
+        return new self(new CalculationOperation($this->value, null, CalculationOperation::OPERATION_ROUND, ['scale' => $scale]));
+    }
+
     public function toRational(): Rational
     {
         return $this->value->toRational();

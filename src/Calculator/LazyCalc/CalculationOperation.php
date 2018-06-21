@@ -14,6 +14,7 @@ class CalculationOperation implements ToRationalInterface
     public const OPERATION_MUL = 'OPERATION_MUL';
     public const OPERATION_DIV = 'OPERATION_DIV';
     public const OPERATION_NO_OP = 'OPERATION_NO_OP';
+    public const OPERATION_ROUND = 'OPERATION_ROUND';
 
     /** @var ToRationalInterface|CalculationOperation|null */
     private $a;
@@ -27,11 +28,14 @@ class CalculationOperation implements ToRationalInterface
     /** @var string|null */
     private $hint;
 
-    public function __construct(?ToRationalInterface $a, ?ToRationalInterface $b, string $operation)
+    private $operationArgs = [];
+
+    public function __construct(?ToRationalInterface $a, ?ToRationalInterface $b, string $operation, array $operationArgs = [])
     {
         $this->a = $a;
         $this->b = $b;
         $this->operation = $operation;
+        $this->operationArgs = $operationArgs;
     }
 
     public function getA(): ?ToRationalInterface
@@ -69,6 +73,10 @@ class CalculationOperation implements ToRationalInterface
 
         if ($this->operation === self::OPERATION_NO_OP) {
             return $this->a->toRational();
+        }
+
+        if ($this->operation === self::OPERATION_ROUND) {
+            return $this->a->toRational()->toDecimal($this->operationArgs['scale'])->toRational();
         }
     }
 
@@ -114,6 +122,12 @@ class CalculationOperation implements ToRationalInterface
         if ($this->operation === self::OPERATION_NO_OP) {
             return $this->toPrettyVal($this->a);
         }
+
+        if ($this->operation === self::OPERATION_ROUND) {
+            return 'round(' . $this->toPrettyVal($this->a) . ', scale = ' . $this->operationArgs['scale'] . ')';
+        }
+
+        throw new \LogicException('could not pretty operation');
     }
 
     public function addHint(string $hint)
