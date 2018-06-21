@@ -5,13 +5,16 @@ namespace Tg\Decimal;
 use InvalidArgumentException;
 
 
-class Decimal implements ToRationalInterface, ToDecimalInterface
+class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterface
 {
     /** @var string */
     private $value;
 
     /** @var int */
     private $scale;
+
+    /** @var string|null */
+    private $hint;
 
     public static function fromStringStrict(string $value): self
     {
@@ -192,6 +195,17 @@ class Decimal implements ToRationalInterface, ToDecimalInterface
     public function toDecimal(int $scale): Decimal
     {
         return dec($this->round($scale)->getValue()); // todo, support for different rounding methods
+    }
+
+    public function hint(string $hint)
+    {
+        $this->hint = $hint;
+        return $this;
+    }
+
+    public function getHint(): ?string
+    {
+        return $this->hint;
     }
 
 }

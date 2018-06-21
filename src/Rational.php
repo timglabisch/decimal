@@ -2,13 +2,16 @@
 
 namespace Tg\Decimal;
 
-class Rational implements ToRationalInterface, ToDecimalInterface
+class Rational implements ToRationalInterface, ToDecimalInterface, HasHintInterface
 {
     /** @var int */
     private $numerator;
 
     /** @var int */
     private $denominator;
+
+    /** @var ?string */
+    private $hint;
 
     public static function fromDecimal(Decimal $decimal): Rational
     {
@@ -120,5 +123,16 @@ class Rational implements ToRationalInterface, ToDecimalInterface
             ->divScaleBySelf(new Decimal($this->getDenominator(), $scale + 1))
             ->round($scale)
             ;
+    }
+
+    public function hint(string $hint)
+    {
+        $this->hint = $hint;
+        return $this;
+    }
+
+    public function getHint(): ?string
+    {
+        return $this->hint;
     }
 }
