@@ -2,7 +2,7 @@
 
 namespace Tg\Decimal;
 
-use Tg\Calc\LazyCalc;
+use Tg\Decimal\Calculator\LazyCalc;
 
 function lazy_calc(ToRationalInterface $toRational): LazyCalc
 {
