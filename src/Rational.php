@@ -2,7 +2,7 @@
 
 namespace Tg\Decimal;
 
-class Rational
+class Rational implements ToRationalInterface, ToDecimalInterface
 {
     /** @var int */
     private $numerator;
@@ -109,4 +109,16 @@ class Rational
         return $this->denominator;
     }
 
+    public function toRational(): Rational
+    {
+        return $this;
+    }
+
+    public function toDecimal(int $scale): Decimal
+    {
+        return (new Decimal($this->getNumerator(), $scale + 1))
+            ->divScaleBySelf(new Decimal($this->getDenominator(), $scale + 1))
+            ->round($scale)
+            ;
+    }
 }

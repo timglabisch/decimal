@@ -11,9 +11,7 @@ use function Tg\Decimal\dec3;
 use function Tg\Decimal\dec5;
 use function Tg\Decimal\dec6;
 use Tg\Decimal\Decimal;
-use function Tg\Decimal\decimal0;
-use function Tg\Decimal\decimal1;
-use function Tg\Decimal\decimal2;
+use Tg\Decimal\Decimal2;
 use function Tg\Decimal\floatish as fl;
 
 class DecimalTest extends TestCase
@@ -243,5 +241,13 @@ class DecimalTest extends TestCase
             (string)dec5("1.11101"),
             (string)dec6('1.111010')->reduceScale()
         );
+    }
+
+    public function testToDecimal()
+    {
+        $res = dec("0.1256")->toDecimal(2);
+
+        static::assertInstanceOf(Decimal2::class, $res);
+        static::assertSame((string)$res, '0.13');
     }
 }

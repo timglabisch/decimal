@@ -5,7 +5,7 @@ namespace Tg\Decimal;
 use InvalidArgumentException;
 
 
-class Decimal
+class Decimal implements ToRationalInterface, ToDecimalInterface
 {
     /** @var string */
     private $value;
@@ -183,4 +183,15 @@ class Decimal
     {
         return $this->getValue();
     }
+
+    public function toRational(): Rational
+    {
+        return Rational::fromDecimal($this);
+    }
+
+    public function toDecimal(int $scale): Decimal
+    {
+        return dec($this->round($scale)->getValue()); // todo, support for different rounding methods
+    }
+
 }
