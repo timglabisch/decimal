@@ -254,7 +254,19 @@ class DecimalTest extends TestCase
             "100000",
             (string)dec0("10")->pow(dec0("5"))
         );
+    }
 
+    public function testAbs()
+    {
+        static::assertSame(
+            "10",
+            (string)dec("10")->abs()
+        );
+
+        static::assertSame(
+            "10",
+            (string)dec("-10")->abs()
+        );
     }
 
     public function testToDecimal()
