@@ -4,10 +4,10 @@ namespace Tg\Decimal;
 
 class Rational implements ToRationalInterface, ToDecimalInterface, HasHintInterface
 {
-    /** @var int */
+    /** @var Decimal0 */
     private $numerator;
 
-    /** @var int */
+    /** @var Decimal0 */
     private $denominator;
 
     /** @var ?string */
@@ -17,71 +17,81 @@ class Rational implements ToRationalInterface, ToDecimalInterface, HasHintInterf
     {
         $scale = $decimal->getScale();
 
-        // hoch rechnen
-        return (new Rational($decimal->getValue() * (10 ** $scale), 10 ** $scale))->normalize();
+        return (new Rational(
+            dec0((string)$decimal->mul(dec0("10")->pow(dec0($scale)))),
+            dec0((string)dec0('10')->pow(dec0($scale)))
+        ))->normalize();
     }
 
     public static function fromInt(int $cnt): Rational
     {
-        return new self($cnt, 1);
+        return new self(dec0((string)$cnt), dec0("1"));
     }
 
-    public function __construct(int $numerator, int $denominator)
+    public function __construct(Decimal0 $numerator, Decimal0 $denominator)
     {
         $this->numerator = $numerator;
         $this->denominator = $denominator;
     }
 
-    public static function leastCommonMultiple(int $a, int $b): int
+    public static function leastCommonMultiple(Decimal0 $a, Decimal0 $b): Decimal
     {
-        if ($a === 0 || $b === 0) {
-            return 0;
+        if ($a->isZero() || $b->isZero()) {
+            return dec0('0');
         }
 
-        return abs($a * $b) / self::greatestCommonDivisor($a, $b);
+        return $a->mul($b)->divScaleBySelf(self::greatestCommonDivisor($a, $b));
     }
 
-    private static function greatestCommonDivisor(int $a, int $b): int
+    private static function greatestCommonDivisor(Decimal0 $a, Decimal0 $b): Decimal
     {
-        if ($a == 0) {
-            return abs($b);
+        if ($a->isZero()) {
+            return $b->abs();
         }
-        if ($b == 0) {
-            return abs($a);
+
+        if ($b->isZero()) {
+            return $a->abs();
         }
 
         do {
-            $h = $a % $b;
+            $h = $a->mod($b);
             $a = $b;
             $b = $h;
-        } while ($b != 0);
+        } while (!$b->isZero());
 
-        return abs($a);
+        return $a->abs();
     }
 
     public function addRational(Rational $rational): Rational
     {
         $lcm = static::leastCommonMultiple($this->getDenominator(), $rational->getDenominator());
 
-        $n = $this->getNumerator() * intdiv($lcm, $this->getDenominator()) + $rational->getNumerator() * intdiv($lcm, $rational->getDenominator());
+        $n = $this->getNumerator()
+            ->mul($lcm->divScaleBySelf($this->getDenominator()))
+            ->add(
+                $rational->getNumerator()->mul(
+                    $lcm->divScaleBySelf($rational->getDenominator())
+                )
+            );
+
         $d = $lcm;
 
-        return (new Rational($n, $d))->normalize();
+        return (new Rational(dec0((string)$n), dec0((string)$d)))->normalize();
     }
 
     public function multiplyRational(Rational $rational): Rational
     {
         return (new Rational(
-            $rational->getNumerator() * $this->getNumerator(),
-            $this->getDenominator() * $rational->getDenominator()
+            dec0((string)$rational->getNumerator()->mul($this->getNumerator())),
+            dec0((string)$this->getDenominator()->mul($rational->getDenominator()))
         ))->normalize();
     }
 
     public function divideRational(Rational $rational): Rational
     {
         return (new Rational(
-            $rational->getDenominator() * $this->getNumerator(),
-            $this->getDenominator() * $rational->getNumerator()
+            dec0((string)$rational->getDenominator()->mul($this->getNumerator())),
+            dec0((string)$this->getDenominator()->mul($rational->getNumerator()))
         ))->normalize();
     }
 
@@ -94,7 +104,10 @@ class Rational implements ToRationalInterface, ToDecimalInterface, HasHintInterf
     {
         $greatestCommonDivisor = static::greatestCommonDivisor($this->numerator, $this->denominator);
 
-        return new Rational($this->getNumerator() / $greatestCommonDivisor, $this->getDenominator() / $greatestCommonDivisor);
+        return new Rational(
+            dec0((string)$this->getNumerator()->divScaleBySelf($greatestCommonDivisor)),
+            dec0((string)$this->getDenominator()->divScaleBySelf($greatestCommonDivisor))
+        );
     }
 
     public function __toString()
@@ -102,12 +115,12 @@ class Rational implements ToRationalInterface, ToDecimalInterface, HasHintInterf
         return '(' . $this->numerator . ' / ' . $this->denominator . ')';
     }
 
-    public function getNumerator(): int
+    public function getNumerator(): Decimal0
     {
         return $this->numerator;
     }
 
-    public function getDenominator(): int
+    public function getDenominator(): Decimal0
     {
         return $this->denominator;
     }

@@ -24,7 +24,7 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
 
         $decimal = rtrim(substr($value, $pos + 1), '0');
 
-        $klass = '\Tg\Decimal\Decimal'. strlen($decimal);
+        $klass = '\Tg\Decimal\Decimal' . strlen($decimal);
 
         if (!\class_exists($klass)) {
             throw new \RuntimeException('no class for Decimaltype found, to large?');
@@ -64,6 +64,11 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
         return $this->scale;
     }
 
+    public function mod(Decimal $decimal): Decimal
+    {
+        return dec(\bcmod($this->getValue(), $decimal->getValue()));
+    }
+
     private static function createNewNumber($numeric, int $scale)
     {
         if ($numeric instanceof Decimal) {
@@ -97,7 +102,13 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
         return new Decimal($amount, $scale);
     }
 
-    public function mul(Decimal $multiplier): Decimal {
+    public function pow(Decimal $b): Decimal
+    {
+        return dec(\bcpow($this->getValue(), $b->getValue()));
+    }
+
+    public function mul(Decimal $multiplier): Decimal
+    {
 
         // the maximum scale of a multiplication is scale + scale.
         $scale = $this->getScale() + $multiplier->getScale();
@@ -153,6 +164,16 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
         return bccomp($this->getValue(), '0', $this->getScale()) === 0;
     }
 
+    /** @return static */
+    public function abs(): self
+    {
+        if ($this->isNegative()) {
+            return dec(substr($this->getValue(), 1), $this->getScale());
+        }
+
+        return $this;
+    }
+
     public function round(int $scale = 0): Decimal
     {
         $add = '0.' . str_repeat('0', $scale) . '5';
@@ -200,6 +221,7 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
     public function hint(string $hint)
     {
         $this->hint = $hint;
+
         return $this;
     }
 

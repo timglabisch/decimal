@@ -3,6 +3,7 @@
 namespace Tg\Tests\Decimal;
 
 use PHPUnit\Framework\TestCase;
+use function Tg\Decimal\dec0;
 use Tg\Decimal\Decimal;
 use Tg\Decimal\Decimal1;
 use Tg\Decimal\Decimal10;
@@ -27,12 +28,12 @@ class RationalTest extends TestCase
     {
         yield [
             '(3 / 5)',
-            (new Rational(4, 10))->addRational(new Rational(2, 10))
+            (new Rational(dec0(4), dec0(10)))->addRational(new Rational(dec0(2), dec0(10)))
         ];
 
         yield [
             '(13 / 24)',
-            (new Rational(3, 8))->addRational(new Rational(1, 6))
+            (new Rational(dec0(3), dec0(8)))->addRational(new Rational(dec0(1), dec0(6)))
         ];
     }
 
@@ -40,7 +41,7 @@ class RationalTest extends TestCase
     {
         yield [
             '(3 / 10)',
-            (new Rational(2, 5))->multiplyRational(new Rational(6, 8))
+            (new Rational(dec0(2), dec0(5)))->multiplyRational(new Rational(dec0(6), dec0(8)))
         ];
     }
 
@@ -48,7 +49,7 @@ class RationalTest extends TestCase
     {
         yield [
             '(14 / 15)',
-            (new Rational(2, 3))->divideRational(new Rational(5, 7))
+            (new Rational(dec0(2), dec0(3)))->divideRational(new Rational(dec0(5), dec0(7)))
         ];
     }
 
@@ -56,7 +57,7 @@ class RationalTest extends TestCase
     {
         yield [
             '(9 / 4)',
-            (new Rational(15, 4))->substractRational(new Rational(6, 4))
+            (new Rational(dec0(15), dec0(4)))->substractRational(new Rational(dec0(6), dec0(4)))
         ];
     }
 
