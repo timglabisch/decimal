@@ -243,6 +243,20 @@ class DecimalTest extends TestCase
         );
     }
 
+    public function testPow()
+    {
+        static::assertSame(
+            "100",
+            (string)dec0("10")->pow(dec0("2"))
+        );
+
+        static::assertSame(
+            "100000",
+            (string)dec0("10")->pow(dec0("5"))
+        );
+
+    }
+
     public function testToDecimal()
     {
         $res = dec("0.1256")->toDecimal(2);
