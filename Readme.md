@@ -17,8 +17,8 @@ If you simply want to calculate a price, or do some basic math you probably don'
 ### Decimal Type
 
 The package comes with the classes `Decimal` and `Decimal[0-100]` the `0-100` indicates the precision.
-This would allow you to write Something like `(new Decimal2("1.99"))->add(new Decimal2("1.99))`.
-There are also helper functions to create Decimals: `dec2("1.99")->add(dec2("1.99))`. The Function `dec2` returns a `Decimal2`, `dec99` could return an Instance of `Decimal99`.
+This would allow you to write Something like `(new Decimal2("1.99"))->add(new Decimal2("1.99"))`.
+There are also helper functions to create Decimals: `dec2("1.99")->add(dec2("1.99"))`. The Function `dec2` returns a `Decimal2`, `dec99` could return an Instance of `Decimal99`.
 
 ## Rational
 
