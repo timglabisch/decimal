@@ -7,20 +7,26 @@ use Tg\Decimal\Decimal;
 use Tg\Decimal\Rational;
 use Tg\Decimal\ToRationalInterface;
 
-class CalculationOperation implements ToRationalInterface
+class CalculationOperation implements CalculationOperationInterface
 {
     public const OPERATION_ADD = 'OPERATION_ADD';
     public const OPERATION_SUB = 'OPERATION_SUB';
     public const OPERATION_MUL = 'OPERATION_MUL';
     public const OPERATION_DIV = 'OPERATION_DIV';
     public const OPERATION_NO_OP = 'OPERATION_NO_OP';
+    public const OPERATION_POW = 'OPERATION_POW';
+    public const OPERATION_MUL_SCALE_BY_SELF = 'OPERATION_MUL_SCALE_BY_SELF';
+    public const OPERATION_ABS = 'OPERATION_ABS';
     public const OPERATION_ROUND = 'OPERATION_ROUND';
 
-    /** @var ToRationalInterface|CalculationOperation|null */
+    /** @var CalculationOperation|null */
     private $a;
 
-    /** @var ToRationalInterface|CalculationOperation|null */
+    /** @var CalculationOperation|null */
     private $b;
+
+    /** @var toRationalInterface|null */
+    private $leafValue;
 
     /** @var string */
     private $operation;
@@ -30,7 +36,7 @@ class CalculationOperation implements ToRationalInterface
 
     private $operationArgs = [];
 
-    public function __construct(?ToRationalInterface $a, ?ToRationalInterface $b, string $operation, array $operationArgs = [])
+    public function __construct(?CalculationOperationInterface $a, ?CalculationOperationInterface $b, string $operation, array $operationArgs = [])
     {
         $this->a = $a;
         $this->b = $b;
@@ -38,12 +44,28 @@ class CalculationOperation implements ToRationalInterface
         $this->operationArgs = $operationArgs;
     }
 
-    public function getA(): ?ToRationalInterface
+    public static function newLeaf(ToRationalInterface $toRational) {
+        $self = new static(null, null, self::OPERATION_NO_OP, []);
+        $self->leafValue = $toRational;
+        return $self;
+    }
+
+    public function isLeaf(): bool
+    {
+        return $this->leafValue !== null;
+    }
+
+    public function getLeafValue(): ?ToRationalInterface
+    {
+        return $this->leafValue;
+    }
+
+    public function getA(): ?CalculationOperationInterface
     {
         return $this->a;
     }
 
-    public function getB(): ?ToRationalInterface
+    public function getB(): ?CalculationOperationInterface
     {
         return $this->b;
     }
@@ -51,33 +73,6 @@ class CalculationOperation implements ToRationalInterface
     public function getOperation(): string
     {
         return $this->operation;
-    }
-
-    public function toRational(): Rational
-    {
-        if ($this->operation === self::OPERATION_ADD) {
-            return $this->a->toRational()->addRational($this->b->toRational());
-        }
-
-        if ($this->operation === self::OPERATION_DIV) {
-            return $this->a->toRational()->divideRational($this->b->toRational());
-        }
-
-        if ($this->operation === self::OPERATION_MUL) {
-            return $this->a->toRational()->multiplyRational($this->b->toRational());
-        }
-
-        if ($this->operation === self::OPERATION_SUB) {
-            return $this->a->toRational()->substractRational($this->b->toRational());
-        }
-
-        if ($this->operation === self::OPERATION_NO_OP) {
-            return $this->a->toRational();
-        }
-
-        if ($this->operation === self::OPERATION_ROUND) {
-            return $this->a->toRational()->toDecimal($this->operationArgs['scale'])->toRational();
-        }
     }
 
     public function hint(string $hint)
@@ -94,6 +89,4 @@ class CalculationOperation implements ToRationalInterface
     {
         return $this->operationArgs;
     }
-
-
 }

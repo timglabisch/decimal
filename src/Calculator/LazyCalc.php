@@ -3,45 +3,55 @@
 namespace Tg\Decimal\Calculator;
 
 use Tg\Decimal\Calculator\LazyCalc\CalculationOperation;
+use Tg\Decimal\Calculator\LazyCalc\CalculationOperationInterface;
+use Tg\Decimal\Calculator\LazyCalc\Engine\LazyCalcEngineInterface;
+use Tg\Decimal\Calculator\LazyCalc\Engine\LazyCalcEngineRational;
 use Tg\Decimal\PrettyPrinter\PrettyPrinterInterface;
 use Tg\Decimal\PrettyPrinter\PrettyPrinterStandard;
 use Tg\Decimal\Rational;
 use Tg\Decimal\ToRationalInterface;
 
-class LazyCalc implements ToRationalInterface
+class LazyCalc implements ToRationalInterface, CalculationOperationInterface
 {
     /** @var CalculationOperation */
     private $value;
 
-    public function __construct(ToRationalInterface $value)
+    /** @param $value ToRationalInterface|CalculationOperationInterface  */
+    public function __construct($value)
     {
-        if ($value instanceof CalculationOperation) {
+        if ($value instanceof CalculationOperationInterface) {
             $this->value = $value;
 
             return;
         }
 
-        $this->value = new CalculationOperation($value, null, CalculationOperation::OPERATION_NO_OP);
+        if ($value instanceof ToRationalInterface) {
+            $this->value = CalculationOperation::newLeaf($value);
+
+            return;
+        }
+
+        throw new \InvalidArgumentException();
     }
 
     public function add(ToRationalInterface $value): LazyCalc
     {
-        return new self(new CalculationOperation($this->value, $value, CalculationOperation::OPERATION_ADD));
+        return new self(new CalculationOperation($this->value, new self($value), CalculationOperation::OPERATION_ADD));
     }
 
     public function sub(ToRationalInterface $value): LazyCalc
     {
-        return new self(new CalculationOperation($this->value, $value, CalculationOperation::OPERATION_SUB));
+        return new self(new CalculationOperation($this->value, new self($value), CalculationOperation::OPERATION_SUB));
     }
 
     public function mul(ToRationalInterface $value): LazyCalc
     {
-        return new self(new CalculationOperation($this->value, $value, CalculationOperation::OPERATION_MUL));
+        return new self(new CalculationOperation($this->value, new self($value), CalculationOperation::OPERATION_MUL));
     }
 
     public function div(ToRationalInterface $value): LazyCalc
     {
-        return new self(new CalculationOperation($this->value, $value, CalculationOperation::OPERATION_DIV));
+        return new self(new CalculationOperation($this->value, new self($value), CalculationOperation::OPERATION_DIV));
     }
 
     public function round(int $scale): LazyCalc
@@ -49,14 +59,16 @@ class LazyCalc implements ToRationalInterface
         return new self(new CalculationOperation($this->value, null, CalculationOperation::OPERATION_ROUND, ['scale' => $scale]));
     }
 
-    public function toRational(): Rational
+    public function toRational(LazyCalcEngineInterface $engine = null): Rational
     {
-        return $this->value->toRational();
+        return $this->calculate($engine);
     }
 
-    public function calculate(): Rational
+    public function calculate(LazyCalcEngineInterface $engine = null): Rational
     {
-        return $this->value->toRational();
+        $engine = $engine ?? new LazyCalcEngineRational();
+
+        return $engine->toRational($this)->toRational();
     }
 
     public function pretty(PrettyPrinterInterface $printer = null): string
@@ -75,4 +87,35 @@ class LazyCalc implements ToRationalInterface
     {
         return $this->value;
     }
+
+    public function getA(): ?CalculationOperationInterface
+    {
+        return $this->getCalculationOperation()->getA();
+    }
+
+    public function getB(): ?CalculationOperationInterface
+    {
+        return $this->getCalculationOperation()->getB();
+    }
+
+    public function getOperation(): string
+    {
+        return $this->getCalculationOperation()->getOperation();
+    }
+
+    public function getOperationArgs()
+    {
+        return $this->getCalculationOperation()->getOperationArgs();
+    }
+
+    public function isLeaf(): bool
+    {
+        return $this->getCalculationOperation()->isLeaf();
+    }
+
+    public function getLeafValue(): ?ToRationalInterface
+    {
+        return $this->getCalculationOperation()->getLeafValue();
+    }
+
 }
