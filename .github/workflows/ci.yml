@@ -7,9 +7,13 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
+            -   name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: '7.4'
+                    coverage: none
+                    extensions: bcmath
             -   uses: actions/checkout@v2
-
             -   uses: php-actions/composer@v5
-
             -   name: PHPUnit Tests
                 uses: php-actions/phpunit@v2
