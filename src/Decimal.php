@@ -35,10 +35,7 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
 
     public function __construct(string $value, int $scale)
     {
-        if (!is_numeric($value)) {
-            throw new \LogicException('Invalid number:' . $value);
-        }
-        $this->value = bcadd($value, '0', $scale);
+        $this->value = static::createNewNumber($value, $scale);
         $this->scale = $scale;
     }
 
@@ -72,14 +69,14 @@ class Decimal implements ToRationalInterface, ToDecimalInterface, HasHintInterfa
         return dec(\bcmod($this->getValue(), $decimal->getValue()));
     }
 
-    public static function createNewNumber($numeric, int $scale)
+    private static function createNewNumber($numeric, int $scale)
     {
         if ($numeric instanceof Decimal) {
             return $numeric;
         }
 
         if (!is_numeric($numeric)) {
-            throw new \LogicException('Invalid number: ' . $numeric);
+            throw new \LogicException('invalid number');
         }
 
         if (is_float($numeric)) {
