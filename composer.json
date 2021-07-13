@@ -2,9 +2,6 @@
   "name": "timg/decimal",
   "type": "library",
   "license": "MIT",
-  "require": {
-
-  },
   "authors": [
     {
       "name": "timglabisch",
@@ -20,12 +17,15 @@
       "src/AutoloadHelpers.php"
     ]
   },
-  "require-dev": {
-    "phpunit/phpunit": "^6.5"
-  },
   "autoload-dev": {
     "psr-4": {
       "Tg\\Tests\\Decimal\\": "tests/"
     }
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^9.5"
+  },
+  "require": {
+    "ext-bcmath": "*"
   }
 }
